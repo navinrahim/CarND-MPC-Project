@@ -23,7 +23,7 @@ const double Lf = 2.67;
 
 // double ref_cte = 0;
 // double ref_epsi = 0;
-double ref_v = 3;
+double ref_v = 50;
 
 size_t x_start = 0;
 size_t y_start = x_start + N;
@@ -50,21 +50,23 @@ class FG_eval {
     size_t t;
     //Cost components to minimize cte and epsi and make sure that velocity is the reference velocity
     for(t=0;t<N;t++) {
-      fg[0] += 2000*CppAD::pow(vars[cte_start+t],2);
-      fg[0] += 2000*CppAD::pow(vars[epsi_start+t],2);
+      fg[0] += 2000*CppAD::pow(vars[cte_start+t],2); 
+      fg[0] += 2000*CppAD::pow(vars[epsi_start+t],2);  
       fg[0] += CppAD::pow(vars[v_start+t]-ref_v,2);
     }
 
     //
     for (t=0; t<N-1 ;t++) {
-      fg[0] += 50*CppAD::pow(vars[delta_start+t],2);
-      fg[0] += 50*CppAD::pow(vars[a_start+t],2);
+      fg[0] += 5*CppAD::pow(vars[delta_start+t],2);
+      fg[0] += 5*CppAD::pow(vars[a_start+t],2);
+
+      //fg[0] += 450*CppAD::pow(vars[a_start+t] * vars[delta_start+t],2);
     }
 
     //Cost component to avoid sudden transitions in steering angle and throttle
     for(t=0;t<N-2;t++) {
-      fg[0] += 500 * CppAD::pow(vars[delta_start+t+1]-vars[delta_start+t],2);
-      fg[0] += 100 * CppAD::pow(vars[a_start+t+1]-vars[a_start+t],2);
+      fg[0] += 500 * CppAD::pow(vars[delta_start+t+1]-vars[delta_start+t],2); 
+      fg[0] += 50 * CppAD::pow(vars[a_start+t+1]-vars[a_start+t],2); 
     }
 
     //

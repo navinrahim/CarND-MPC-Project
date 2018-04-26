@@ -41,6 +41,8 @@ double polyeval(Eigen::VectorXd coeffs, double x) {
   return result;
 }
 
+const double Lf = 2.67;
+
 // Fit a polynomial.
 // Adapted from
 // https://github.com/JuliaMath/Polynomials.jl/blob/master/src/Polynomials.jl#L676-L716
@@ -91,13 +93,17 @@ int main() {
           double py = j[1]["y"];
           double psi = j[1]["psi"];
           double v = j[1]["speed"];
+          double steer_value = j[1]["steering_angle"];
+          double throttle_value = j[1]["throttle"];
 
-          /*
-          * TODO: Calculate steering angle and throttle using MPC.
-          *
-          * Both are in between [-1, 1].
-          *
-          */
+          //Latency
+          double latency = 0.1;
+          px = px + v * cos(psi) * latency;
+          py = py + v * sin(psi) * latency;
+          psi = psi - (v/Lf) * steer_value * latency;
+          // cte = cte + v * sin(epsi) * latency;
+          // epsi = epsi + (v/Lf) * steer_value * latency;
+          v = v + throttle_value * latency; 
 
           //Changing coordinates from global to car coordinates
           for(size_t i=0; i<ptsx.size(); i++) {
@@ -119,10 +125,7 @@ int main() {
 
           //Define State
           double cte = polyeval(coeffs, 0);
-          double epsi = -atan(coeffs[1]+coeffs[2]*coeffs[2]);
-
-          // double steer_value = j[1]["steering_angle"];
-          // double throttle_value = j[1]["throttle"];
+          double epsi = -atan(coeffs[1]);
 
           Eigen::VectorXd state(6);
           state << 0,0,0,v,cte,epsi;
@@ -131,6 +134,13 @@ int main() {
           auto vars = mpc.Solve(state, coeffs);
 
           json msgJson;
+          /*
+          * TODO: Calculate steering angle and throttle using MPC.
+          *
+          * Both are in between [-1, 1].
+          *
+          */
+
           // NOTE: Remember to divide by deg2rad(25) before you send the steering value back.
           // Otherwise the values will be in between [-deg2rad(25), deg2rad(25] instead of [-1, 1].
 
