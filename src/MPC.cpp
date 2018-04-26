@@ -6,7 +6,7 @@
 using CppAD::AD;
 
 // TODO: Set the timestep length and duration
-size_t N = 10;
+size_t N = 6;
 double dt = 0.1;
 
 // This value assumes the model presented in the classroom is used.
@@ -57,16 +57,14 @@ class FG_eval {
 
     //
     for (t=0; t<N-1 ;t++) {
-      fg[0] += 5*CppAD::pow(vars[delta_start+t],2);
-      fg[0] += 5*CppAD::pow(vars[a_start+t],2);
-
-      //fg[0] += 450*CppAD::pow(vars[a_start+t] * vars[delta_start+t],2);
+      fg[0] += 50*CppAD::pow(vars[delta_start+t],2);
+      fg[0] += 50*CppAD::pow(vars[a_start+t],2);
     }
 
     //Cost component to avoid sudden transitions in steering angle and throttle
     for(t=0;t<N-2;t++) {
       fg[0] += 500 * CppAD::pow(vars[delta_start+t+1]-vars[delta_start+t],2); 
-      fg[0] += 50 * CppAD::pow(vars[a_start+t+1]-vars[a_start+t],2); 
+      fg[0] += 100 * CppAD::pow(vars[a_start+t+1]-vars[a_start+t],2); 
     }
 
     //

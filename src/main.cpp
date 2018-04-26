@@ -101,9 +101,9 @@ int main() {
           px = px + v * cos(psi) * latency;
           py = py + v * sin(psi) * latency;
           psi = psi - (v/Lf) * steer_value * latency;
+          v = v + throttle_value * latency;
           // cte = cte + v * sin(epsi) * latency;
           // epsi = epsi + (v/Lf) * steer_value * latency;
-          v = v + throttle_value * latency; 
 
           //Changing coordinates from global to car coordinates
           for(size_t i=0; i<ptsx.size(); i++) {
