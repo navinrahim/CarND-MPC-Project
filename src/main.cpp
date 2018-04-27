@@ -102,8 +102,6 @@ int main() {
           py = py + v * sin(psi) * latency;
           psi = psi - (v/Lf) * steer_value * latency;
           v = v + throttle_value * latency;
-          // cte = cte + v * sin(epsi) * latency;
-          // epsi = epsi + (v/Lf) * steer_value * latency;
 
           //Changing coordinates from global to car coordinates
           for(size_t i=0; i<ptsx.size(); i++) {
@@ -172,7 +170,7 @@ int main() {
 
           //.. add (x,y) points to list here, points are in reference to the vehicle's coordinate system
           // the points in the simulator are connected by a Yellow line
-          double poly_inc = 2.5;
+          double poly_inc = 2;
           int num_points = 25;
 
           for(int i=1; i<num_points ; i++) {

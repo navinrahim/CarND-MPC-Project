@@ -6,8 +6,8 @@
 using CppAD::AD;
 
 // TODO: Set the timestep length and duration
-size_t N = 6;
-double dt = 0.1;
+size_t N = 10;
+double dt = 0.2;
 
 // This value assumes the model presented in the classroom is used.
 //
@@ -21,9 +21,7 @@ double dt = 0.1;
 // This is the length from front to CoG that has a similar radius.
 const double Lf = 2.67;
 
-// double ref_cte = 0;
-// double ref_epsi = 0;
-double ref_v = 15;
+double ref_v =30;
 
 size_t x_start = 0;
 size_t y_start = x_start + N;
@@ -45,26 +43,26 @@ class FG_eval {
     // TODO: implement MPC
     // `fg` a vector of the cost constraints, `vars` is a vector of variable values (state & actuators)
     // NOTE: You'll probably go back and forth between this function and
-    // the Solver function below.
+    // the Solver function below. 
     fg[0] = 0;
     size_t t;
     //Cost components to minimize cte and epsi and make sure that velocity is the reference velocity
     for(t=0;t<N;t++) {
-      fg[0] += 2000*CppAD::pow(vars[cte_start+t],2); 
-      fg[0] += 2000*CppAD::pow(vars[epsi_start+t],2);  
+      fg[0] += 3000*CppAD::pow(vars[cte_start+t],2); 
+      fg[0] += 3000*CppAD::pow(vars[epsi_start+t],2);  
       fg[0] += CppAD::pow(vars[v_start+t]-ref_v,2);
     }
 
     //
     for (t=0; t<N-1 ;t++) {
-      fg[0] += 50*CppAD::pow(vars[delta_start+t],2);
-      fg[0] += 50*CppAD::pow(vars[a_start+t],2);
+      fg[0] += 5*CppAD::pow(vars[delta_start+t],2);
+      fg[0] += 5*CppAD::pow(vars[a_start+t],2);
     }
 
     //Cost component to avoid sudden transitions in steering angle and throttle
     for(t=0;t<N-2;t++) {
-      fg[0] += 1500 * CppAD::pow(vars[delta_start+t+1]-vars[delta_start+t],2); 
-      fg[0] += 100 * CppAD::pow(vars[a_start+t+1]-vars[a_start+t],2); 
+      fg[0] += 1000 * CppAD::pow(vars[delta_start+t+1]-vars[delta_start+t],2); 
+      fg[0] += 10 * CppAD::pow(vars[a_start+t+1]-vars[a_start+t],2); 
     }
 
     //
